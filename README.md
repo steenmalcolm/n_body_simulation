@@ -17,5 +17,7 @@ For a classical N-Body system driven only by gravitational interactions, the for
 
 $\ddot{x_i}= G (\Sigma_{j\neq i}\frac{m_i m_j}{|x_i-x_j|^2})$
 
-An demonstration with four particles can be seen here.
-![Animated GIF](visualization/simulation.gif)
+A demonstration with four particles can be seen here.
+<div style="text-align:center">
+<img src="visualization/simulation.gif" width="200" />
+</div>
