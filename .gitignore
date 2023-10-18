@@ -3,3 +3,4 @@
 *.png
 *.gif
 **/__pycache__
+render

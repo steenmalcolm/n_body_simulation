@@ -90,11 +90,8 @@ public:
 
   void updateV(float addV[3]){
     
-    for(int i=0; i<3; i++){
+    for(int i=0; i<3; i++)
       v[i] +=addV[i];  
-      
-      
-      }
   }
   
   void updateR(float addR[3]){
@@ -110,7 +107,6 @@ public:
   }
 };
 
-
 ///////////////////////////////////////////////////////////////////////
 // ParticleField Class keeps track of all Particles in the simulation//
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +115,7 @@ class ParticleField{
 private:
   int nPtcl;
   Particle* field;
-  FILE* fileName = fopen("positions.csv", "w");
+  FILE* fileName = fopen("visualization/positions.csv", "w");
 
 public:
 // Particle Field Constructors
@@ -182,7 +178,6 @@ public:
   Particle &operator[](int i){
     return field[i];
   }
-
 
 ////////////////////////////////////////////////////////////////////////
 // Class Methods

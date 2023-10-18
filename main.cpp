@@ -1,16 +1,26 @@
 #include <iostream>
 #include <time.h>
-#include <math.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <cstring>
 #include "lattice.hpp"
 #include "ptcl.hpp"
 using namespace std;
 
-int main(){
-  
-  const int n_particles = 4;
-  const int time_steps = 3000000;
+int main(int argc, char *argv[]){
+  int n_particles = 4;
+  int time_steps = 3000000;
+  float dT = 0.0003;
+
+  for (int i=1; i<argc; i+=2){
+    if (strcmp(argv[i], "-n") == 0)
+      n_particles = stoi(argv[i+1]);
+    else if (strcmp(argv[i], "-ts")==0)
+      time_steps = stoi(argv[i+1]);
+    else if (strcmp(argv[i], "-dT"))
+      dT = atof(argv[i+1]);
+    }
+ 
   srand(time(NULL));
   State* particle_states = new State[n_particles]();
   for (int i=0; i<n_particles; i++){
@@ -42,7 +52,6 @@ int main(){
 
   
   ParticleField myField(n_particles, particle_states);
-  float dT = 0.0003;
   for(int i=0; i<time_steps; i++){
     myField.updateVel(dT);
     myField.updateR(dT);
