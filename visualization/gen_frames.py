@@ -57,6 +57,7 @@ class GenerateFrames:
 
       plt.imshow(img,cmap='gray')
       
+      plt.tight_layout()
       plt.savefig(
         os.path.join(frames_fp, f"frame_{frame//step_size:03d}.png"),
         dpi=self._npixels)
