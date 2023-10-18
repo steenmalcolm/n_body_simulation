@@ -1,5 +1,5 @@
 *.exe
-*.txt
+*.csv
 *.png
-*.mp4
+*.gif
 **/__pycache__

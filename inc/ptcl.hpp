@@ -5,6 +5,10 @@
 #include<iomanip>
 using namespace std;
 
+struct State{
+  float* position;
+  float* velocity;
+};
 
 class Particle{
 private:
@@ -14,7 +18,6 @@ private:
   float m;
 
 public:
-////////////////////////////////////////////////////////////////////////
 // Particle Constructors
 
   Particle(float coord[6], float m): id(rand()), m(m){
@@ -24,25 +27,29 @@ public:
     setV(vNew);
   }
 
+  Particle(State &state): m(5.){
+    setR(state.position);
+    setV(state.velocity);
+  }
+
   Particle(float coord[6]): m(5.){
     float rNew[3] = {coord[0], coord[1], coord[2]};
     float vNew[3] = {coord[3], coord[4], coord[5]};
     setR(rNew);
     setV(vNew);
-  } 
+  }
 
-  Particle(): m(1.){
+  Particle(): m(5.){
     float r[3] = {0., 0., 0.};
     float v[3] = {0., 0., 0.};
     setR(r);
     setV(v);
   }
 
-////////////////////////////////////////////////////////////////////////
 // Class getter & setters
 
   void print(){
-    // cout << r[0] << " "<< r[1] << " "<< r[2] << endl;
+    cout << r[0] << " "<< r[1] << " "<< r[2] << endl;
   }
 
   int getId(){
@@ -95,63 +102,63 @@ public:
       r[i] +=addR[i];
   }
 
-
-////////////////////////////////////////////////////////////////////////
 // Overload Operators
 
-  void operator()(float coord[6]){
-    float rNew[3] = {coord[0], coord[1], coord[2]};
-    float vNew[3] = {coord[3], coord[4], coord[5]};
-    setR(rNew);
-    setV(vNew);
+  void operator()(State &state){
+    setR(state.position);
+    setV(state.velocity);
   }
 };
 
 
 ///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
 // ParticleField Class keeps track of all Particles in the simulation//
-///////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
 class ParticleField{
 private:
   int nPtcl;
   Particle* field;
-  FILE* fileName = fopen("positions.txt", "w");
+  FILE* fileName = fopen("positions.csv", "w");
 
 public:
-////////////////////////////////////////////////////////////////////////
 // Particle Field Constructors
 
-  ParticleField(int n, float coords[]): nPtcl(n) {
-    fprintf(fileName, "%d \n", n);
-    field = new Particle[n]();
-    float coord[6] = {0., 0., 0., 0., 0., 0.};
+  ParticleField(int n, State* &particle_states): nPtcl(n) {
 
-    for(int i=0; i<n; i++){
-      for(int j=0; j<6; j++)
-        coord[j] = coords[6*i + j];
-      field[i](coord);
-    }
+    for (int particle=0; particle<n; particle++)
+      for (char coordinate: {'x', 'y', 'z'})
+        fprintf(fileName, "particle_%d_%c, ", particle, coordinate);
+    fprintf(fileName, "\n");
+
+    field = new Particle[n]();
+
+    for(int i=0; i<n; i++)
+      field[i](particle_states[i]);
   }
 
   ParticleField(int n): nPtcl(n) {
-    fprintf(fileName, "%d \n", n);
+
+    for (int particle=0; particle<n; particle++)
+      for (char coordinate: {'x', 'y', 'z'})
+        fprintf(fileName, "particle_%d_%s, ", particle, coordinate);
+    fprintf(fileName, "\n");
+
     field = new Particle[n]();
     // initialize all particle coordinates with random numbers between 0 and 1
-    float randCoord[6] = {0., 0., 0., 0., 0., 0.};
-    long int norm = pow(2, 30);
-    for(int i=0; i < n; i++){
-      for(int j=0; j < 6; j++){
-        randCoord[j] = (float)rand()/(float)norm;
-        if (j<3)
-          randCoord[j] *= 10;
+    State* states = new State[n];
+    for (int i=0; i<n; i++){
+      float position[3];
+      float velocity[3];
+      for (int j=0; j<3; j++){
+        position[j] = 100*float(rand()/pow(2,16)); 
+        velocity[j] = 0.1*float(rand()/pow(2,16)); 
       }
-      field[i](randCoord);
+      states[i] = {position, velocity};
     }
+ 
+    for (int i=0; i<n; i++)
+      field[i](states[i]);
   }
 
   ~ParticleField(){
@@ -159,7 +166,6 @@ public:
     delete field;
   }
 
-////////////////////////////////////////////////////////////////////////
 // Getter and Setter
 
   int getN(){
