@@ -49,10 +49,19 @@ class GenerateFrames:
       if frame>0:
         for particle in self._positions[frame-step_size]:
           coords = list(map(round, particle))
+          for dx in [-1, 1]:
+            img[coords[0]+dx][coords[1]]=0
+          for dy in [-1, 1]:
+            img[coords[0]][coords[1]+dy]=0
           img[coords[0]][coords[1]] = 0
+
 
       for particle in self._positions[frame]:
         coords = list(map(round, particle))
+        for dx in [-1, 1]:
+          img[coords[0]+dx][coords[1]]=1
+        for dy in [-1, 1]:
+          img[coords[0]][coords[1]+dy]=1
         img[coords[0]][coords[1]] = 1
 
       plt.imshow(img,cmap='gray')
